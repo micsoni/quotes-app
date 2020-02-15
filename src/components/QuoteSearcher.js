@@ -93,8 +93,14 @@ export default class QuoteSearcher extends React.Component {
       }
     }, 0);
 
+    //filter duplicate quotes
+    const filteredQuotes = this.state.quotes.filter(
+      (quote, index, self) =>
+        index === self.findIndex(quoteT => quoteT.quoteText === quote.quoteText)
+    );
+
     // display quotes on screen
-    let displayQuotes = this.state.quotes.map(quote => (
+    let displayQuotes = filteredQuotes.map(quote => (
       <Quote
         key={quote._id}
         text={quote.quoteText}
