@@ -78,19 +78,17 @@ export default class QuoteSearcher extends React.Component {
 
   //Add quote method
   addQuoteFunction = (newAuthor, newQuote) => {
-    {
-      const newCompleteQuote = {
-        _id: Math.round(Math.random() * 100000),
-        quoteAuthor: newAuthor,
-        quoteText: newQuote,
-        likes: false,
-        dislikes: false,
-        quoteCss: {}
-      };
-      this.setState({
-        quotes: [...this.state.quotes, newCompleteQuote]
-      });
-    }
+    const newCompleteQuote = {
+      _id: Math.round(Math.random() * 100000),
+      quoteAuthor: newAuthor,
+      quoteText: newQuote,
+      likes: false,
+      dislikes: false,
+      quoteCss: {}
+    };
+    this.setState({
+      quotes: [...this.state.quotes, newCompleteQuote]
+    });
   };
 
   render() {
