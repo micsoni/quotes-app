@@ -4,24 +4,37 @@ import Quote from "./Quote";
 export default class QuoteSearcher extends React.Component {
   state = {
     quotes: [],
-    fetching: true,
-    error: false
+    fetching: false,
+    error: false,
+    keyWord: " ",
+    noQuotes: false
   };
 
-  componentDidMount() {
-    return fetch("https://quote-garden.herokuapp.com/quotes/search/tree")
+  search = () => {
+    this.setState({ fetching: true });
+    return fetch(
+      `https://quote-garden.herokuapp.com/quotes/search/${this.state.keyWord}`
+    )
       .then(res => res.json())
       .then(data => {
         const quotesData = data.results.map(result => {
           return { ...result, likes: false, dislikes: false, quoteCss: {} };
         });
-        this.setState({ quotes: quotesData, fetching: false });
+        if (quotesData.length === 0) {
+          this.setState({ noQuotes: true, fetching: false });
+        } else {
+          this.setState({
+            quotes: quotesData,
+            noQuotes: false,
+            fetching: false
+          });
+        }
       })
       .catch(error => {
         this.setState({ error: true, quotes: [] });
         console.log(error);
       });
-  }
+  };
 
   // method to change css and add like according to ID
   likedIt = id => {
@@ -54,7 +67,15 @@ export default class QuoteSearcher extends React.Component {
     this.setState({ quotes: updateLikes });
   };
 
+  //set the input value to the state
+  handleChange = event => {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
+
   render() {
+    //add the total of likes
     const totalLikes = this.state.quotes.reduce((acc, quote) => {
       if (quote.likes) {
         return acc + 1;
@@ -63,6 +84,7 @@ export default class QuoteSearcher extends React.Component {
       }
     }, 0);
 
+    // add the total of deslikes
     const totalDislikes = this.state.quotes.reduce((acc, quote) => {
       if (quote.dislikes) {
         return acc + 1;
@@ -71,7 +93,8 @@ export default class QuoteSearcher extends React.Component {
       }
     }, 0);
 
-    const displayQuotes = this.state.quotes.map(quote => (
+    // display quotes on screen
+    let displayQuotes = this.state.quotes.map(quote => (
       <Quote
         key={quote._id}
         text={quote.quoteText}
@@ -85,10 +108,19 @@ export default class QuoteSearcher extends React.Component {
     if (this.state.fetching === true) {
       return <p>Loading...</p>;
     }
-
+    if (this.state.noQuotes === true) {
+      displayQuotes = "No quotes found in your search. Try a different word!";
+    }
     return (
       <div>
         <h1>Quotes</h1>
+        <input
+          type="text"
+          name="keyWord"
+          onChange={this.handleChange}
+          value={this.state.keyWord}
+        />
+        <button onClick={this.search}>Search!</button>
         <h2>
           Liked: {totalLikes}/ Dislikes: {totalDislikes}
         </h2>

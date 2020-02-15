@@ -4,7 +4,9 @@ import PropTypes from "prop-types";
 export default class Quote extends React.Component {
   static propTypes = {
     text: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired
+    author: PropTypes.string.isRequired,
+    changeQuoteCss: PropTypes.object.isRequired,
+    addLike: PropTypes.func.isRequired
   };
 
   render() {
