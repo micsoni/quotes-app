@@ -6,32 +6,37 @@ export default class QuoteSearcher extends React.Component {
   static propTypes = {};
 
   state = {
-    quotes: [
-      {
-        _id: "5d91b45d9980192a317c8acc",
-        quoteText:
-          "Notice that the stiffest tree is most easily cracked, while the bamboo or willow survives by bending with the wind.",
-        quoteAuthor: "Bruce Lee"
-      },
-      {
-        _id: "5d91b45d9980192a317c8abe",
-        quoteText:
-          "Give me six hours to chop down a tree and I will spend the first four sharpening the axe.",
-        quoteAuthor: "Abraham Lincoln"
-      },
-      {
-        _id: "5d91b45d9980192a317c8955",
-        quoteText:
-          "Good timber does not grow with ease; the stronger the wind, the stronger the trees.",
-        quoteAuthor: "J. Willard Marriott"
-      }
-    ]
+    quotes: [],
+    fetching: true,
+    error: false
   };
+
+  componentDidMount() {
+    return fetch("https://quote-garden.herokuapp.com/quotes/search/tree")
+      .then(res => res.json())
+      .then(data => {
+        const quotesData = data.results;
+        this.setState({ quotes: quotesData, fetching: false });
+      })
+      .catch(error => {
+        this.setState({ error: true, quotes: [] });
+        console.log(error);
+      });
+  }
 
   render() {
     const displayQuotes = this.state.quotes.map(quote => (
-      <Quote key={quote.id} text={quote.quoteText} author={quote.quoteAuthor} />
+      <Quote
+        key={quote._id}
+        text={quote.quoteText}
+        author={quote.quoteAuthor}
+      />
     ));
+
+    if (this.state.fetching === true) {
+      return <p>Loading...</p>;
+    }
+
     return (
       <div>
         <h1>Quotes</h1>
