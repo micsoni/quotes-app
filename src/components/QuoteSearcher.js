@@ -1,5 +1,6 @@
 import React from "react";
 import Quote from "./Quote";
+import AddQuote from "./AddQuote";
 
 export default class QuoteSearcher extends React.Component {
   state = {
@@ -75,6 +76,23 @@ export default class QuoteSearcher extends React.Component {
     });
   };
 
+  //Add quote method
+  addQuoteFunction = (newAuthor, newQuote) => {
+    {
+      const newCompleteQuote = {
+        _id: Math.round(Math.random() * 100000),
+        quoteAuthor: newAuthor,
+        quoteText: newQuote,
+        likes: false,
+        dislikes: false,
+        quoteCss: {}
+      };
+      this.setState({
+        quotes: [...this.state.quotes, newCompleteQuote]
+      });
+    }
+  };
+
   render() {
     //add the total of likes
     const totalLikes = this.state.quotes.reduce((acc, quote) => {
@@ -145,9 +163,12 @@ export default class QuoteSearcher extends React.Component {
         />
         <button onClick={this.search}>Search!</button>
         <h2>
-          Liked: {totalLikes}/ Dislikes: {totalDislikes}
+          Likes: {totalLikes}/ Dislikes: {totalDislikes}
         </h2>
         <div>{displayQuotes}</div>
+        <div>
+          <AddQuote addNewQuote={this.addQuoteFunction} />
+        </div>
       </div>
     );
   }
