@@ -1,10 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Quote from "./Quote";
 
 export default class QuoteSearcher extends React.Component {
-  static propTypes = {};
-
   state = {
     quotes: [],
     fetching: true,
@@ -15,7 +12,9 @@ export default class QuoteSearcher extends React.Component {
     return fetch("https://quote-garden.herokuapp.com/quotes/search/tree")
       .then(res => res.json())
       .then(data => {
-        const quotesData = data.results;
+        const quotesData = data.results.map(result => {
+          return { ...result, likes: false, dislikes: false, quoteCss: {} };
+        });
         this.setState({ quotes: quotesData, fetching: false });
       })
       .catch(error => {
@@ -24,12 +23,62 @@ export default class QuoteSearcher extends React.Component {
       });
   }
 
+  // method to change css and add like according to ID
+  likedIt = id => {
+    const updateLikes = this.state.quotes.map(quote => {
+      if (quote._id === id) {
+        const style = {
+          p: { color: "green", fontWeight: "bold" }
+        };
+        return { ...quote, likes: true, dislikes: false, quoteCss: style.p };
+      } else {
+        return quote;
+      }
+    });
+
+    this.setState({ quotes: updateLikes });
+  };
+
+  // method to change css and add dislike according to ID
+  dislikedIt = id => {
+    const updateLikes = this.state.quotes.map(quote => {
+      if (quote._id === id) {
+        const style = {
+          p: { color: "red", textDecoration: "line-through" }
+        };
+        return { ...quote, dislikes: true, likes: false, quoteCss: style.p };
+      } else {
+        return quote;
+      }
+    });
+    this.setState({ quotes: updateLikes });
+  };
+
   render() {
+    const totalLikes = this.state.quotes.reduce((acc, quote) => {
+      if (quote.likes) {
+        return acc + 1;
+      } else {
+        return acc;
+      }
+    }, 0);
+
+    const totalDislikes = this.state.quotes.reduce((acc, quote) => {
+      if (quote.dislikes) {
+        return acc + 1;
+      } else {
+        return acc;
+      }
+    }, 0);
+
     const displayQuotes = this.state.quotes.map(quote => (
       <Quote
         key={quote._id}
         text={quote.quoteText}
         author={quote.quoteAuthor}
+        changeQuoteCss={quote.quoteCss}
+        addLike={() => this.likedIt(quote._id)}
+        addDislike={() => this.dislikedIt(quote._id)}
       />
     ));
 
@@ -40,6 +89,9 @@ export default class QuoteSearcher extends React.Component {
     return (
       <div>
         <h1>Quotes</h1>
+        <h2>
+          Liked: {totalLikes}/ Dislikes: {totalDislikes}
+        </h2>
         <div>{displayQuotes}</div>
       </div>
     );

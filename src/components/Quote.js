@@ -7,32 +7,14 @@ export default class Quote extends React.Component {
     author: PropTypes.string.isRequired
   };
 
-  state = {
-    css: {}
-  };
-
-  likedIt = () => {
-    const style = {
-      p: { color: "green", fontWeight: "bold" }
-    };
-
-    this.setState({ css: style.p });
-  };
-
-  dislikedIt = () => {
-    const style = {
-      p: { color: "red", textDecoration: "line-through" }
-    };
-    this.setState({ css: style.p });
-  };
-
   render() {
     return (
       <div>
-        <p style={this.state.css}> {this.props.text}</p>
+        <p style={this.props.changeQuoteCss}> {this.props.text}</p>
         <div>
-          By: {this.props.author} <button onClick={this.likedIt}>like</button>{" "}
-          <button onClick={this.dislikedIt}>dislike</button>
+          By: {this.props.author}{" "}
+          <button onClick={this.props.addLike}>like</button>{" "}
+          <button onClick={this.props.addDislike}>dislike</button>
         </div>
       </div>
     );
