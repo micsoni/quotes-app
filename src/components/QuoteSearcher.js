@@ -10,6 +10,7 @@ export default class QuoteSearcher extends React.Component {
     noQuotes: false
   };
 
+  //replaced componentDidMount for a search method
   search = () => {
     this.setState({ fetching: true });
     return fetch(
@@ -111,14 +112,30 @@ export default class QuoteSearcher extends React.Component {
       />
     ));
 
+    //count the number of quotes and authors
+    let numberOfQuotes = filteredQuotes.length;
+    let numberOfAuthors = filteredQuotes
+      .map(quote => quote.quoteAuthor)
+      .reduce(
+        (unique, quote) =>
+          unique.includes(quote) ? unique : [...unique, quote],
+        []
+      ).length;
+
     if (this.state.fetching === true) {
       return <p>Loading...</p>;
     }
     if (this.state.noQuotes === true) {
       displayQuotes = "No quotes found in your search. Try a different word!";
+      numberOfQuotes = 0;
+      numberOfAuthors = 0;
     }
     return (
       <div>
+        <p>
+          Number of quotes: {numberOfQuotes} | Number of authors:{" "}
+          {numberOfAuthors}
+        </p>
         <h1>Quotes</h1>
         <input
           type="text"
