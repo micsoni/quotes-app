@@ -1,9 +1,13 @@
 import React from "react";
-import logo from "./logo.svg";
+import QuoteSearcher from "./components/QuoteSearcher";
 import "./App.css";
 
 function App() {
-  return <div className="App"></div>;
+  return (
+    <div className="App">
+      <QuoteSearcher />
+    </div>
+  );
 }
 
 export default App;
